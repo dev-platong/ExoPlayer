@@ -454,8 +454,10 @@ public class PlayerActivity extends AppCompatActivity
         player.seekToDefaultPosition();
         player.prepare();
       } else {
-        updateButtonVisibility();
-        showControls();
+        player.stop();
+        player.release();
+        player = null;
+        initializePlayer();
       }
     }
 
