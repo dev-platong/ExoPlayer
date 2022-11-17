@@ -58,7 +58,9 @@ import java.util.Collections;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
-/** An activity that plays media using {@link ExoPlayer}. */
+/**
+ * An activity that plays media using {@link ExoPlayer}.
+ */
 public class PlayerActivity extends AppCompatActivity
     implements OnClickListener, StyledPlayerControlView.VisibilityListener {
 
@@ -73,7 +75,8 @@ public class PlayerActivity extends AppCompatActivity
   protected StyledPlayerView playerView;
   protected LinearLayout debugRootView;
   protected TextView debugTextView;
-  protected @Nullable ExoPlayer player;
+  protected @Nullable
+  ExoPlayer player;
 
   private boolean isShowingTrackSelectionDialog;
   private Button selectTracksButton;
@@ -89,8 +92,10 @@ public class PlayerActivity extends AppCompatActivity
 
   // For ad playback only.
 
-  @Nullable private AdsLoader clientSideAdsLoader;
-  @Nullable private ImaServerSideAdInsertionMediaSource.AdsLoader serverSideAdsLoader;
+  @Nullable
+  private AdsLoader clientSideAdsLoader;
+  @Nullable
+  private ImaServerSideAdInsertionMediaSource.AdsLoader serverSideAdsLoader;
   private ImaServerSideAdInsertionMediaSource.AdsLoader.@MonotonicNonNull State
       serverSideAdsLoaderState;
 
@@ -260,7 +265,9 @@ public class PlayerActivity extends AppCompatActivity
     setContentView(R.layout.player_activity);
   }
 
-  /** @return Whether initialization was successful. */
+  /**
+   * @return Whether initialization was successful.
+   */
   protected boolean initializePlayer() {
     if (player == null) {
       Intent intent = getIntent();

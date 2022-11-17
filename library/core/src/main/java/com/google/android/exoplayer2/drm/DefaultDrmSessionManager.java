@@ -129,7 +129,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
     /**
      * Sets the UUID of the DRM scheme and the {@link ExoMediaDrm.Provider} to use.
      *
-     * @param uuid The UUID of the DRM scheme.
+     * @param uuid                The UUID of the DRM scheme.
      * @param exoMediaDrmProvider The {@link ExoMediaDrm.Provider}.
      * @return This builder.
      */
@@ -147,7 +147,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      * the associated content. {@code multiSession} is required when content uses key rotation.
      *
      * @param multiSession Whether this session manager is allowed to acquire multiple simultaneous
-     *     sessions.
+     *                     sessions.
      * @return This builder.
      */
     public Builder setMultiSession(boolean multiSession) {
@@ -163,11 +163,11 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      * when transitioning between clear and encrypted sections of content.
      *
      * @param useDrmSessionsForClearContentTrackTypes The track types ({@link C#TRACK_TYPE_AUDIO}
-     *     and/or {@link C#TRACK_TYPE_VIDEO}) for which to use a {@link DrmSession} regardless of
-     *     whether the content is clear or encrypted.
+     *                                                and/or {@link C#TRACK_TYPE_VIDEO}) for which to use a {@link DrmSession} regardless of
+     *                                                whether the content is clear or encrypted.
      * @return This builder.
      * @throws IllegalArgumentException If {@code useDrmSessionsForClearContentTrackTypes} contains
-     *     track types other than {@link C#TRACK_TYPE_AUDIO} and {@link C#TRACK_TYPE_VIDEO}.
+     *                                  track types other than {@link C#TRACK_TYPE_AUDIO} and {@link C#TRACK_TYPE_VIDEO}.
      */
     public Builder setUseDrmSessionsForClearContent(
         @C.TrackType int... useDrmSessionsForClearContentTrackTypes) {
@@ -184,7 +184,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      * encrypted part of the content have yet to be loaded.
      *
      * @param playClearSamplesWithoutKeys Whether clear samples within protected content should be
-     *     played when keys for the encrypted part of the content have yet to be loaded.
+     *                                    played when keys for the encrypted part of the content have yet to be loaded.
      * @return This builder.
      */
     public Builder setPlayClearSamplesWithoutKeys(boolean playClearSamplesWithoutKeys) {
@@ -215,7 +215,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      * keep-alive.
      *
      * @param sessionKeepaliveMs The time to keep {@link DrmSession}s alive before fully releasing,
-     *     in milliseconds. Must be &gt; 0 or {@link C#TIME_UNSET} to disable keep-alive.
+     *                           in milliseconds. Must be &gt; 0 or {@link C#TIME_UNSET} to disable keep-alive.
      * @return This builder.
      */
     public Builder setSessionKeepaliveMs(long sessionKeepaliveMs) {
@@ -224,7 +224,9 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       return this;
     }
 
-    /** Builds a {@link DefaultDrmSessionManager} instance. */
+    /**
+     * Builds a {@link DefaultDrmSessionManager} instance.
+     */
     public DefaultDrmSessionManager build(MediaDrmCallback mediaDrmCallback) {
       return new DefaultDrmSessionManager(
           uuid,
@@ -264,21 +266,34 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   @Retention(RetentionPolicy.SOURCE)
   @Target(TYPE_USE)
   @IntDef({MODE_PLAYBACK, MODE_QUERY, MODE_DOWNLOAD, MODE_RELEASE})
-  public @interface Mode {}
+  public @interface Mode {
+
+  }
+
   /**
    * Loads and refreshes (if necessary) a license for playback. Supports streaming and offline
    * licenses.
    */
   public static final int MODE_PLAYBACK = 0;
-  /** Restores an offline license to allow its status to be queried. */
+  /**
+   * Restores an offline license to allow its status to be queried.
+   */
   public static final int MODE_QUERY = 1;
-  /** Downloads an offline license or renews an existing one. */
+  /**
+   * Downloads an offline license or renews an existing one.
+   */
   public static final int MODE_DOWNLOAD = 2;
-  /** Releases an existing offline license. */
+  /**
+   * Releases an existing offline license.
+   */
   public static final int MODE_RELEASE = 3;
-  /** Number of times to retry for initial provisioning and key request for reporting error. */
+  /**
+   * Number of times to retry for initial provisioning and key request for reporting error.
+   */
   public static final int INITIAL_DRM_REQUEST_RETRY_COUNT = 3;
-  /** Default value for {@link Builder#setSessionKeepaliveMs(long)}. */
+  /**
+   * Default value for {@link Builder#setSessionKeepaliveMs(long)}.
+   */
   public static final long DEFAULT_SESSION_KEEPALIVE_MS = 5 * 60 * C.MILLIS_PER_SECOND;
 
   private static final String TAG = "DefaultDrmSessionMgr";
@@ -300,23 +315,29 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   private final Set<DefaultDrmSession> keepaliveSessions;
 
   private int prepareCallsCount;
-  @Nullable private ExoMediaDrm exoMediaDrm;
-  @Nullable private DefaultDrmSession placeholderDrmSession;
-  @Nullable private DefaultDrmSession noMultiSessionDrmSession;
+  @Nullable
+  private ExoMediaDrm exoMediaDrm;
+  @Nullable
+  private DefaultDrmSession placeholderDrmSession;
+  @Nullable
+  private DefaultDrmSession noMultiSessionDrmSession;
   private @MonotonicNonNull Looper playbackLooper;
   private @MonotonicNonNull Handler playbackHandler;
   private int mode;
-  @Nullable private byte[] offlineLicenseKeySetId;
+  @Nullable
+  private byte[] offlineLicenseKeySetId;
   private @MonotonicNonNull PlayerId playerId;
 
-  /* package */ @Nullable volatile MediaDrmHandler mediaDrmHandler;
+  /* package */
+  @Nullable
+  volatile MediaDrmHandler mediaDrmHandler;
 
   /**
-   * @param uuid The UUID of the drm scheme.
-   * @param exoMediaDrm An underlying {@link ExoMediaDrm} for use by the manager.
-   * @param callback Performs key and provisioning requests.
+   * @param uuid                 The UUID of the drm scheme.
+   * @param exoMediaDrm          An underlying {@link ExoMediaDrm} for use by the manager.
+   * @param callback             Performs key and provisioning requests.
    * @param keyRequestParameters An optional map of parameters to pass as the last argument to
-   *     {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
+   *                             {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
    * @deprecated Use {@link Builder} instead.
    */
   @SuppressWarnings("deprecation")
@@ -336,13 +357,13 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   }
 
   /**
-   * @param uuid The UUID of the drm scheme.
-   * @param exoMediaDrm An underlying {@link ExoMediaDrm} for use by the manager.
-   * @param callback Performs key and provisioning requests.
+   * @param uuid                 The UUID of the drm scheme.
+   * @param exoMediaDrm          An underlying {@link ExoMediaDrm} for use by the manager.
+   * @param callback             Performs key and provisioning requests.
    * @param keyRequestParameters An optional map of parameters to pass as the last argument to
-   *     {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
-   * @param multiSession A boolean that specify whether multiple key session support is enabled.
-   *     Default is false.
+   *                             {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
+   * @param multiSession         A boolean that specify whether multiple key session support is enabled.
+   *                             Default is false.
    * @deprecated Use {@link Builder} instead.
    */
   @SuppressWarnings("deprecation")
@@ -363,15 +384,15 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   }
 
   /**
-   * @param uuid The UUID of the drm scheme.
-   * @param exoMediaDrm An underlying {@link ExoMediaDrm} for use by the manager.
-   * @param callback Performs key and provisioning requests.
-   * @param keyRequestParameters An optional map of parameters to pass as the last argument to
-   *     {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
-   * @param multiSession A boolean that specify whether multiple key session support is enabled.
-   *     Default is false.
+   * @param uuid                        The UUID of the drm scheme.
+   * @param exoMediaDrm                 An underlying {@link ExoMediaDrm} for use by the manager.
+   * @param callback                    Performs key and provisioning requests.
+   * @param keyRequestParameters        An optional map of parameters to pass as the last argument to
+   *                                    {@link ExoMediaDrm#getKeyRequest(byte[], List, int, HashMap)}. May be null.
+   * @param multiSession                A boolean that specify whether multiple key session support is enabled.
+   *                                    Default is false.
    * @param initialDrmRequestRetryCount The number of times to retry for initial provisioning and
-   *     key request before reporting error.
+   *                                    key request before reporting error.
    * @deprecated Use {@link Builder} instead.
    */
   @Deprecated
@@ -444,7 +465,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
    *       is released.
    * </ul>
    *
-   * @param mode The mode to be set.
+   * @param mode                   The mode to be set.
    * @param offlineLicenseKeySetId The key set id of the license to be used with the given mode.
    */
   public void setMode(@Mode int mode, @Nullable byte[] offlineLicenseKeySetId) {
@@ -719,7 +740,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
     // assume any error indicates resource shortage (ensuring we retry).
     return session.getState() == DrmSession.STATE_ERROR
         && (Util.SDK_INT < 19
-            || checkNotNull(session.getError()).getCause() instanceof ResourceBusyException);
+        || checkNotNull(session.getError()).getCause() instanceof ResourceBusyException);
   }
 
   /**
@@ -809,12 +830,12 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   /**
    * Extracts {@link SchemeData} instances suitable for the given DRM scheme {@link UUID}.
    *
-   * @param drmInitData The {@link DrmInitData} from which to extract the {@link SchemeData}.
-   * @param uuid The UUID.
+   * @param drmInitData      The {@link DrmInitData} from which to extract the {@link SchemeData}.
+   * @param uuid             The UUID.
    * @param allowMissingData Whether a {@link SchemeData} with null {@link SchemeData#data} may be
-   *     returned.
+   *                         returned.
    * @return The extracted {@link SchemeData} instances, or an empty list if no suitable data is
-   *     present.
+   * present.
    */
   private static List<SchemeData> getSchemeDatas(
       DrmInitData drmInitData, UUID uuid, boolean allowMissingData) {
@@ -858,7 +879,8 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   private class ProvisioningManagerImpl implements DefaultDrmSession.ProvisioningManager {
 
     private final Set<DefaultDrmSession> sessionsAwaitingProvisioning;
-    @Nullable private DefaultDrmSession provisioningSession;
+    @Nullable
+    private DefaultDrmSession provisioningSession;
 
     public ProvisioningManagerImpl() {
       sessionsAwaitingProvisioning = new HashSet<>();
@@ -976,16 +998,18 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
    */
   private class PreacquiredSessionReference implements DrmSessionReference {
 
-    @Nullable private final DrmSessionEventListener.EventDispatcher eventDispatcher;
+    @Nullable
+    private final DrmSessionEventListener.EventDispatcher eventDispatcher;
 
-    @Nullable private DrmSession session;
+    @Nullable
+    private DrmSession session;
     private boolean isReleased;
 
     /**
      * Constructs an instance.
      *
      * @param eventDispatcher The {@link DrmSessionEventListener.EventDispatcher} passed to {@link
-     *     #acquireSession(DrmSessionEventListener.EventDispatcher, Format)}.
+     *                        #acquireSession(DrmSessionEventListener.EventDispatcher, Format)}.
      */
     public PreacquiredSessionReference(
         @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher) {
