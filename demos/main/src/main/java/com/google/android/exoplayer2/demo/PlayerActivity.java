@@ -36,6 +36,9 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManagerProvider;
+import com.google.android.exoplayer2.drm.DrmSessionManagerProvider;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
 import com.google.android.exoplayer2.ext.ima.ImaServerSideAdInsertionMediaSource;
@@ -45,6 +48,7 @@ import com.google.android.exoplayer2.offline.DownloadRequest;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.StyledPlayerControlView;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
@@ -89,6 +93,9 @@ public class PlayerActivity extends AppCompatActivity
   private boolean startAutoPlay;
   private int startItemIndex;
   private long startPosition;
+  private DrmSessionManagerProvider drmSessionManagerProvider;
+  private MediaSource.Factory currentStreamDataSourceFactory;
+  private DefaultDrmSessionManager manager;
 
   // For ad playback only.
 
@@ -105,6 +112,7 @@ public class PlayerActivity extends AppCompatActivity
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     dataSourceFactory = DemoUtil.getDataSourceFactory(/* context= */ this);
+    drmSessionManagerProvider = new DefaultDrmSessionManagerProvider();
 
     setContentView();
     debugRootView = findViewById(R.id.controls_root);
@@ -304,7 +312,9 @@ public class PlayerActivity extends AppCompatActivity
     if (haveStartPosition) {
       player.seekTo(startItemIndex, startPosition);
     }
-    player.setMediaItems(mediaItems, /* resetPosition= */ !haveStartPosition);
+    MediaSource.Factory currentStreamDataSourceFactory = new DashMediaSource.Factory(dataSourceFactory);
+    currentStreamDataSourceFactory.setDrmSessionManagerProvider(drmSessionManagerProvider);
+    player.setMediaSource(currentStreamDataSourceFactory.createMediaSource(mediaItems.get(0)));
     player.prepare();
     updateButtonVisibility();
     return true;

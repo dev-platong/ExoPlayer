@@ -506,7 +506,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       // callback).
       List<DefaultDrmSession> sessions = new ArrayList<>(this.sessions);
       for (int i = 0; i < sessions.size(); i++) {
-        sessions.get(i).release(/* eventDispatcher= */ null);
+        // sessions.get(i).release(/* eventDispatcher= */ null);
       }
     }
     releaseAllPreacquiredSessions();
@@ -691,8 +691,10 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       this.playbackLooper = playbackLooper;
       this.playbackHandler = new Handler(playbackLooper);
     } else {
-      checkState(this.playbackLooper == playbackLooper);
-      checkNotNull(playbackHandler);
+      // checkState(this.playbackLooper == playbackLooper);
+      // checkNotNull(playbackHandler);
+      this.playbackLooper = playbackLooper;
+      this.playbackHandler = new Handler(playbackLooper);
     }
   }
 
