@@ -17,6 +17,7 @@ package com.google.android.exoplayer2.demo;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -38,6 +39,7 @@ import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManagerProvider;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManagerProvider;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
@@ -94,8 +96,6 @@ public class PlayerActivity extends AppCompatActivity
   private int startItemIndex;
   private long startPosition;
   private DrmSessionManagerProvider drmSessionManagerProvider;
-  private MediaSource.Factory currentStreamDataSourceFactory;
-  private DefaultDrmSessionManager manager;
 
   // For ad playback only.
 
@@ -312,7 +312,8 @@ public class PlayerActivity extends AppCompatActivity
     if (haveStartPosition) {
       player.seekTo(startItemIndex, startPosition);
     }
-    MediaSource.Factory currentStreamDataSourceFactory = new DashMediaSource.Factory(dataSourceFactory);
+    MediaSource.Factory currentStreamDataSourceFactory = new DashMediaSource.Factory(
+        dataSourceFactory);
     currentStreamDataSourceFactory.setDrmSessionManagerProvider(drmSessionManagerProvider);
     player.setMediaSource(currentStreamDataSourceFactory.createMediaSource(mediaItems.get(0)));
     player.prepare();
@@ -396,6 +397,11 @@ public class PlayerActivity extends AppCompatActivity
       player.release();
       player = null;
       playerView.setPlayer(/* player= */ null);
+      DrmSessionManager drmSessionManager = drmSessionManagerProvider.get(mediaItems.get(0));
+      if (drmSessionManager instanceof DefaultDrmSessionManager
+          && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        ((DefaultDrmSessionManager) drmSessionManager).releaseSavedSessionForRetry();
+      }
       mediaItems = Collections.emptyList();
     }
     if (clientSideAdsLoader != null) {
