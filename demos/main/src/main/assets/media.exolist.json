@@ -35,7 +35,8 @@
         "name": "HD (cenc)",
         "uri": "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd",
         "drm_scheme": "widevine",
-        "drm_license_uri": "https://proxy.uat.widevine.com/proxy?video_id=2015_tears&provider=widevine_test"
+        "drm_license_uri": "https://proxy.uat.widevine.com/proxy?video_id=2015_tears&provider=widevine_test",
+        "ad_tag_uri": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpost&cmsid=496&vid=short_onecue&correlator="
       },
       {
         "name": "UHD (cenc)",

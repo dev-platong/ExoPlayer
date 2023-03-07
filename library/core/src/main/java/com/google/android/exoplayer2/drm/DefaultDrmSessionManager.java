@@ -505,12 +505,19 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       // Make a local copy, because sessions are removed from this.sessions during release (via
       // callback).
       List<DefaultDrmSession> sessions = new ArrayList<>(this.sessions);
-      for (int i = 0; i < sessions.size(); i++) {
+      for (int i = 0; i < sessions.size() - 1; i++) {
         sessions.get(i).release(/* eventDispatcher= */ null);
       }
     }
     releaseAllPreacquiredSessions();
 
+    maybeReleaseMediaDrm();
+  }
+
+  public final void releaseSavedSessionForRetry() {
+    assert(sessions.size() == 1);
+    sessions.get(0).release(null);
+    releaseAllPreacquiredSessions();
     maybeReleaseMediaDrm();
   }
 
@@ -691,8 +698,10 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       this.playbackLooper = playbackLooper;
       this.playbackHandler = new Handler(playbackLooper);
     } else {
-      checkState(this.playbackLooper == playbackLooper);
-      checkNotNull(playbackHandler);
+      // checkState(this.playbackLooper == playbackLooper);
+      // checkNotNull(playbackHandler);
+      this.playbackLooper = playbackLooper;
+      this.playbackHandler = new Handler(playbackLooper);
     }
   }
 
